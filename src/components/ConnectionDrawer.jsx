@@ -8,7 +8,6 @@ import {
   Sparkles, 
   ExternalLink, 
   Zap, 
-  Tag, 
   ShieldCheck,
   ChevronRight
 } from 'lucide-react';
@@ -131,7 +130,7 @@ export default function ConnectionDrawer({
                       tabIndex={0}
                       onKeyDown={(e) => {
                         if (e.key === 'Enter' || e.key === ' ') {
-                          onSelectReceipt && onSelectReceipt(item);
+                          if (onSelectReceipt) onSelectReceipt(item);
                         }
                       }}
                     >

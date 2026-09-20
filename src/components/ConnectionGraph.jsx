@@ -1,17 +1,14 @@
 import React, { useState, useMemo } from 'react';
-import { motion } from 'framer-motion';
 import { 
-  Sparkles, 
   RotateCcw, 
   Filter, 
   Info,
-  Maximize2,
-  GitBranch,
-  LayoutGrid,
-  Network,
-  ChevronRight
+  LayoutGrid, 
+  Network, 
+  ChevronRight 
 } from 'lucide-react';
 import { CATEGORY_CONFIG } from '../data/mockReceipts';
+import { filterReceiptsByCluster, calculateGraphLayout } from '../engine/connections';
 
 // Curated cluster presets for instant exploration
 const CLUSTERS = [
@@ -35,75 +32,14 @@ export default function ConnectionGraph({
   const [hoveredNodeId, setHoveredNodeId] = useState(null);
   const [viewMode, setViewMode] = useState('graph'); // 'graph' or 'matrix'
 
-  // Filter receipts based on selected cluster
+  // Filter receipts based on selected cluster via engine utility
   const filteredReceipts = useMemo(() => {
-    if (activeCluster === 'all') return receipts.slice(0, 48); // Showcase dense 48-node layout for optimal performance & clarity
-    if (activeCluster === 'midnight') return receipts.filter(r => r.date === '2026-03-18');
-    if (activeCluster === 'sunday') return receipts.filter(r => r.location === 'Komorebi Coffee Roasters' || (r.tags && r.tags.includes('coffee')));
-    if (activeCluster === 'cinema') return receipts.filter(r => r.date === '2026-03-27' || (r.tags && r.tags.includes('cinema')));
-    if (activeCluster === 'sourdough') return receipts.filter(r => r.tags && r.tags.includes('sourdough'));
-    if (activeCluster === 'coastal') return receipts.filter(r => r.date >= '2026-04-17' && r.date <= '2026-04-19');
-    if (activeCluster === 'coding') return receipts.filter(r => r.tags && (r.tags.includes('coding') || r.tags.includes('hackathon')));
-    return receipts;
+    return filterReceiptsByCluster(receipts, activeCluster);
   }, [activeCluster, receipts]);
 
-  // Map nodes to calculated 2D positions for SVG layout
+  // Map nodes to calculated 2D positions for SVG layout via engine utility
   const { nodePositions, edgesToRender, connectedIdSet } = useMemo(() => {
-    const width = 960;
-    const height = 560;
-    const padding = 60;
-
-    const count = filteredReceipts.length;
-    const posMap = {};
-
-    if (activeCluster === 'midnight') {
-      // Linear chain layout: Music → Place → Photo → Purchase → Event → Message → Note
-      const order = ['rcpt-001', 'rcpt-002', 'rcpt-003', 'rcpt-004', 'rcpt-005', 'rcpt-006', 'rcpt-007'];
-      const sorted = [...filteredReceipts].sort((a, b) => {
-        const idxA = order.indexOf(a.id);
-        const idxB = order.indexOf(b.id);
-        return (idxA === -1 ? 99 : idxA) - (idxB === -1 ? 99 : idxB);
-      });
-
-      sorted.forEach((r, idx) => {
-        const x = padding + (idx / Math.max(1, sorted.length - 1)) * (width - padding * 2);
-        const y = height / 2 + Math.sin(idx * 1.1) * 80;
-        posMap[r.id] = { x, y, receipt: r };
-      });
-    } else {
-      // Organic multi-cluster layout based on temporal date & category
-      filteredReceipts.forEach((r, idx) => {
-        const angle = (idx / count) * 2 * Math.PI;
-        const catIdx = Object.keys(CATEGORY_CONFIG).indexOf(r.category);
-        const rFactor = 160 + (catIdx % 3) * 60 + ((idx * 37) % 50);
-        
-        const centerX = width / 2;
-        const centerY = height / 2;
-
-        const x = Math.max(padding, Math.min(width - padding, centerX + Math.cos(angle) * rFactor));
-        const y = Math.max(padding, Math.min(height - padding, centerY + Math.sin(angle) * (rFactor * 0.75)));
-        
-        posMap[r.id] = { x, y, receipt: r };
-      });
-    }
-
-    // Determine which nodes are connected to selectedReceiptId
-    const connSet = new Set();
-    if (selectedReceiptId) {
-      connSet.add(selectedReceiptId);
-      graphData.edges.forEach(e => {
-        if (e.source === selectedReceiptId) connSet.add(e.target);
-        if (e.target === selectedReceiptId) connSet.add(e.source);
-      });
-    }
-
-    // Filter relevant edges between nodes currently plotted
-    const activeReceiptIds = new Set(filteredReceipts.map(r => r.id));
-    const edges = graphData.edges.filter(e => 
-      activeReceiptIds.has(e.source) && activeReceiptIds.has(e.target)
-    );
-
-    return { nodePositions: posMap, edgesToRender: edges, connectedIdSet: connSet };
+    return calculateGraphLayout(filteredReceipts, activeCluster, selectedReceiptId, graphData);
   }, [filteredReceipts, activeCluster, selectedReceiptId, graphData]);
 
   const activeHoveredReceipt = hoveredNodeId ? receipts.find(r => r.id === hoveredNodeId) : null;

@@ -154,3 +154,110 @@ export function generateChapters(receipts) {
     };
   });
 }
+
+/**
+ * Generates sequential story arcs and documentary narrative steps for each chapter
+ */
+export function generateStories(chapters) {
+  return chapters.map((ch, chIdx) => {
+    // Pick up to 5 representative sequential receipts from this chapter
+    const sortedReceipts = [...ch.receipts].sort((a, b) => {
+      return (a.date || '').localeCompare(b.date || '') || (a.time || '').localeCompare(b.time || '');
+    });
+
+    const sampleReceipts = sortedReceipts.slice(0, 5);
+
+    const steps = sampleReceipts.map((r, idx) => {
+      let promptText = '';
+      if (r.category === 'Music') {
+        promptText = idx === 0 ? 'A song played late that evening.' : 'An auditory frequency set the creative mood.';
+      } else if (r.category === 'Places') {
+        promptText = 'A new location appeared.';
+      } else if (r.category === 'Photos') {
+        promptText = 'A photograph was captured.';
+      } else if (r.category === 'Purchases') {
+        promptText = idx === sampleReceipts.length - 1 ? 'A purchase completed the thread.' : 'A transactional exchange acquired physical tools.';
+      } else if (r.category === 'Events') {
+        promptText = 'An event followed.';
+      } else if (r.category === 'Searches') {
+        promptText = 'An intellectual search query pierced the quiet.';
+      } else if (r.category === 'Messages') {
+        promptText = 'A digital dispatch bridged communication.';
+      } else if (r.category === 'Personal Notes') {
+        promptText = 'A private reflection crystallized into words.';
+      } else if (r.category === 'Movies & Entertainment') {
+        promptText = 'A cinematic narrative engaged the senses.';
+      } else {
+        promptText = 'A moment surfaced on the timeline.';
+      }
+
+      const signals = [];
+      if (r.date) signals.push('Same day');
+      if (r.location) signals.push('Same location');
+      if (idx > 0 && r.time) signals.push('Within 45 minutes');
+      signals.push('Shared keyword');
+      signals.push('Related categories');
+
+      const connectionNote = r.location
+        ? `The data shows this moment converges around ${r.location} on ${r.date} alongside related records.`
+        : `The data shows contextual alignment across ${r.tags ? r.tags.join(', ') : 'chapter patterns'}.`;
+
+      return {
+        index: idx + 1,
+        time: r.time || 'Logged',
+        date: r.date,
+        prompt: promptText,
+        receipt: r,
+        receiptTitle: r.title,
+        category: r.category,
+        detail: r.notes || `Recorded in category ${r.category}`,
+        location: r.location,
+        signals: signals.slice(0, 3),
+        connectionNote,
+        patternNote: ch.detectedPatterns && ch.detectedPatterns[idx % ch.detectedPatterns.length] 
+          ? ch.detectedPatterns[idx % ch.detectedPatterns.length]
+          : ch.keyInsight
+      };
+    });
+
+    const signalsCount = Math.max(3, Math.min(6, ch.connectedMomentsCount));
+
+    return {
+      id: ch.id,
+      chapterNumber: ch.chapterNumber || chIdx + 1,
+      title: ch.title,
+      subtitle: ch.subtitle,
+      date: ch.dateRange,
+      location: ch.receipts[0]?.location || 'Various Coordinates',
+      lead: ch.narrativeLead,
+      keyInsight: ch.keyInsight,
+      whyItMatters: ch.whyItMatters || 'These moments converge around the same date, location, and time window. Activity increased during late evening hours, forming an uninterrupted sequence.',
+      detectedPatterns: ch.detectedPatterns || [
+        'Activity increased during concentrated temporal clusters.',
+        'High spatial convergence across core locations.',
+        'Sequential cross-category threads connecting digital receipts.'
+      ],
+      momentsCount: ch.momentsCount,
+      signalsCount,
+      receipts: sampleReceipts,
+      allReceipts: ch.receipts,
+      steps,
+      conclusion: {
+        headline: 'Story Complete',
+        title: ch.title,
+        subhead: `${ch.momentsCount} connected moments • ${signalsCount} connection signals`,
+        explanation: ch.whyItMatters || 'These moments converge around the same date, location, and time window.'
+      }
+    };
+  });
+}
+
+/**
+ * Finds the corresponding narrative chapter containing a given receipt
+ */
+export function findChapterForReceipt(chapters, receiptId) {
+  if (!receiptId || !Array.isArray(chapters)) return null;
+  return chapters.find(c => c.receipts && c.receipts.some(item => item.id === receiptId)) || null;
+}
+
+

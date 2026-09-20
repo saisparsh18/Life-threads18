@@ -16,7 +16,7 @@ export function detectRepeatedLocations(receipts) {
   });
 
   return Object.entries(locCounts)
-    .filter(([_, count]) => count >= 3)
+    .filter(([, count]) => count >= 3)
     .sort((a, b) => b[1] - a[1])
     .map(([location, count]) => ({
       location,
@@ -59,7 +59,7 @@ export function detectActivitySpikes(receipts) {
   });
 
   return Object.entries(dateCounts)
-    .filter(([_, count]) => count >= 4)
+    .filter(([, count]) => count >= 4)
     .sort((a, b) => b[1] - a[1])
     .map(([date, count]) => {
       const dayReceipts = receipts.filter(r => r.date === date);

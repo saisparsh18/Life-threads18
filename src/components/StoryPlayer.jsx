@@ -5,25 +5,21 @@ import {
   ChevronRight, 
   GitMerge, 
   Sparkles, 
-  Layers, 
   Clock, 
   MapPin, 
-  ArrowRight,
-  Compass,
-  CheckCircle,
-  Play,
-  RotateCcw,
-  BookOpen,
-  ArrowLeft,
-  ShieldCheck,
-  Activity,
-  Zap,
-  Tag
+  Compass, 
+  CheckCircle, 
+  RotateCcw, 
+  BookOpen, 
+  ArrowLeft, 
+  ShieldCheck, 
+  Zap 
 } from 'lucide-react';
 import { CATEGORY_CONFIG } from '../data/mockReceipts';
+import { generateStories } from '../engine/chapters';
 
 export default function StoryPlayer({ 
-  flagshipChain, 
+  flagshipChain: _flagshipChain, 
   chapters = [], 
   initialChapterId = null,
   onExploreThread,
@@ -31,100 +27,8 @@ export default function StoryPlayer({
   onBackToChapters,
   onNavigateToExplore 
 }) {
-  // Generate interactive story arcs for each chapter using its real receipts
-  const stories = useMemo(() => {
-    return chapters.map((ch, chIdx) => {
-      // Pick up to 5-6 representative sequential receipts from this chapter
-      const sortedReceipts = [...ch.receipts].sort((a, b) => {
-        return (a.date || '').localeCompare(b.date || '') || (a.time || '').localeCompare(b.time || '');
-      });
-
-      const sampleReceipts = sortedReceipts.slice(0, 5);
-
-      const steps = sampleReceipts.map((r, idx) => {
-        let promptText = '';
-        if (r.category === 'Music') {
-          promptText = idx === 0 ? 'A song played late that evening.' : 'An auditory frequency set the creative mood.';
-        } else if (r.category === 'Places') {
-          promptText = 'A new location appeared.';
-        } else if (r.category === 'Photos') {
-          promptText = 'A photograph was captured.';
-        } else if (r.category === 'Purchases') {
-          promptText = idx === sampleReceipts.length - 1 ? 'A purchase completed the thread.' : 'A transactional exchange acquired physical tools.';
-        } else if (r.category === 'Events') {
-          promptText = 'An event followed.';
-        } else if (r.category === 'Searches') {
-          promptText = 'An intellectual search query pierced the quiet.';
-        } else if (r.category === 'Messages') {
-          promptText = 'A digital dispatch bridged communication.';
-        } else if (r.category === 'Personal Notes') {
-          promptText = 'A private reflection crystallized into words.';
-        } else if (r.category === 'Movies & Entertainment') {
-          promptText = 'A cinematic narrative engaged the senses.';
-        } else {
-          promptText = 'A moment surfaced on the timeline.';
-        }
-
-        const signals = [];
-        if (r.date) signals.push('Same day');
-        if (r.location) signals.push('Same location');
-        if (idx > 0 && r.time) signals.push('Within 45 minutes');
-        signals.push('Shared keyword');
-        signals.push('Related categories');
-
-        const connectionNote = r.location
-          ? `The data shows this moment converges around ${r.location} on ${r.date} alongside related records.`
-          : `The data shows contextual alignment across ${r.tags ? r.tags.join(', ') : 'chapter patterns'}.`;
-
-        return {
-          index: idx + 1,
-          time: r.time || 'Logged',
-          date: r.date,
-          prompt: promptText,
-          receipt: r,
-          receiptTitle: r.title,
-          category: r.category,
-          detail: r.notes || `Recorded in category ${r.category}`,
-          location: r.location,
-          signals: signals.slice(0, 3),
-          connectionNote,
-          patternNote: ch.detectedPatterns && ch.detectedPatterns[idx % ch.detectedPatterns.length] 
-            ? ch.detectedPatterns[idx % ch.detectedPatterns.length]
-            : ch.keyInsight
-        };
-      });
-
-      const signalsCount = Math.max(3, Math.min(6, ch.connectedMomentsCount));
-
-      return {
-        id: ch.id,
-        chapterNumber: ch.chapterNumber || chIdx + 1,
-        title: ch.title,
-        subtitle: ch.subtitle,
-        date: ch.dateRange,
-        location: ch.receipts[0]?.location || 'Various Coordinates',
-        lead: ch.narrativeLead,
-        keyInsight: ch.keyInsight,
-        whyItMatters: ch.whyItMatters || 'These moments converge around the same date, location, and time window. Activity increased during late evening hours, forming an uninterrupted sequence.',
-        detectedPatterns: ch.detectedPatterns || [
-          'Activity increased during concentrated temporal clusters.',
-          'High spatial convergence across core locations.',
-          'Sequential cross-category threads connecting digital receipts.'
-        ],
-        momentsCount: ch.momentsCount,
-        signalsCount,
-        receipts: sampleReceipts,
-        allReceipts: ch.receipts,
-        steps,
-        conclusion: {
-          headline: 'Story Complete',
-          title: ch.title,
-          subhead: `${ch.momentsCount} connected moments • ${signalsCount} connection signals`,
-          explanation: ch.whyItMatters || 'These moments converge around the same date, location, and time window.'
-        }
-      };
-    });
-  }, [chapters]);
+  // Generate interactive story arcs for each chapter using engine utility
+  const stories = useMemo(() => generateStories(chapters), [chapters]);
 
   // Determine initial story index based on initialChapterId
   const initialIdx = useMemo(() => {
@@ -136,16 +40,16 @@ export default function StoryPlayer({
   const [activeStoryIdx, setActiveStoryIdx] = useState(initialIdx);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
 
-  // Sync if initialChapterId changes externally
-  useEffect(() => {
-    if (initialChapterId) {
-      const idx = stories.findIndex(s => s.id === initialChapterId);
-      if (idx !== -1) {
-        setActiveStoryIdx(idx);
-        setCurrentStepIndex(0);
-      }
+  // Sync if initialChapterId changes externally (derived during render pattern)
+  const [prevInitialId, setPrevInitialId] = useState(initialChapterId);
+  if (initialChapterId !== prevInitialId) {
+    setPrevInitialId(initialChapterId);
+    const idx = stories.findIndex(s => s.id === initialChapterId);
+    if (idx !== -1) {
+      setActiveStoryIdx(idx);
+      setCurrentStepIndex(0);
     }
-  }, [initialChapterId, stories]);
+  }
 
   const activeStory = stories[activeStoryIdx] || stories[0];
   const totalSteps = activeStory ? activeStory.steps.length : 0;
@@ -176,14 +80,14 @@ export default function StoryPlayer({
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'ArrowRight') {
-        if (currentStepIndex < totalSteps) handleNext();
+        setCurrentStepIndex(prev => (prev < totalSteps ? prev + 1 : prev));
       } else if (e.key === 'ArrowLeft') {
-        if (currentStepIndex > 0) handlePrev();
+        setCurrentStepIndex(prev => (prev > 0 ? prev - 1 : 0));
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentStepIndex, totalSteps]);
+  }, [totalSteps]);
 
   if (!activeStory) return null;
 
@@ -323,7 +227,15 @@ export default function StoryPlayer({
                     <span className="rec-id-tag font-mono">{currentStepData.receipt?.id}</span>
                   </div>
 
-                  <h4 className="rec-title">{currentStepData.receiptTitle}</h4>
+                  <h4 
+                    className={`rec-title ${onNavigateToExplore ? 'clickable' : ''}`}
+                    onClick={() => {
+                      if (onNavigateToExplore) onNavigateToExplore(currentStepData.receiptTitle);
+                    }}
+                    title={onNavigateToExplore ? `Search "${currentStepData.receiptTitle}" in Explorer` : undefined}
+                  >
+                    {currentStepData.receiptTitle}
+                  </h4>
                   <p className="rec-detail">{currentStepData.detail}</p>
                   
                   {currentStepData.location && (
@@ -430,7 +342,7 @@ export default function StoryPlayer({
               <div className="conclusion-moments-track">
                 <span className="track-lbl font-mono">Chronological Specimen Chain:</span>
                 <div className="track-items-grid">
-                  {activeStory.receipts.map((r, rIdx) => {
+                  {activeStory.receipts.map((r) => {
                     const cfg = CATEGORY_CONFIG[r.category] || {};
                     return (
                       <div key={r.id} className="track-mini-card">

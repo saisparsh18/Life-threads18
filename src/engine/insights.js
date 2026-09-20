@@ -4,7 +4,7 @@
 // 2. Strong Connection
 // 3. Activity Shift
 
-export function generateFlagshipInsights(receipts) {
+export function generateFlagshipInsights(_receipts = []) {
   return [
     {
       id: 'insight-pattern',

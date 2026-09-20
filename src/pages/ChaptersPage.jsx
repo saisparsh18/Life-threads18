@@ -1,21 +1,12 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  BookOpen, 
   Calendar, 
   GitMerge, 
   Sparkles, 
   ChevronRight, 
-  CheckCircle2, 
-  ArrowRight,
-  Layers,
-  FileText,
-  Clock,
-  TrendingUp,
-  Activity,
-  Compass,
-  Zap,
-  Info
+  Activity, 
+  Layers 
 } from 'lucide-react';
 import ReceiptCard from '../components/ReceiptCard';
 import { CATEGORY_CONFIG } from '../data/mockReceipts';

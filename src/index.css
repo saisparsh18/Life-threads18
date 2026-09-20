@@ -67,6 +67,9 @@
 html {
   scroll-behavior: smooth;
   font-size: 16px;
+  overflow-x: hidden;
+  max-width: 100vw;
+  width: 100%;
 }
 
 body {
@@ -74,6 +77,8 @@ body {
   color: var(--text-primary);
   font-family: var(--font-sans);
   min-height: 100vh;
+  width: 100%;
+  max-width: 100vw;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -83,6 +88,10 @@ body {
     radial-gradient(circle at 10% 80%, rgba(56, 189, 248, 0.05), transparent 50%);
   background-attachment: fixed;
   overflow-x: hidden;
+}
+
+img, svg, canvas {
+  max-width: 100%;
 }
 
 /* Accessibility Focus States */
@@ -123,6 +132,9 @@ select:focus-visible,
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 .app-main-viewport {
@@ -315,6 +327,15 @@ select:focus-visible,
   color: var(--text-secondary);
   font-size: 0.95rem;
   cursor: pointer;
+  min-height: 48px;
+  touch-action: manipulation;
+  width: 100%;
+}
+
+.mobile-nav-btn-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 .mobile-nav-btn.active {
@@ -3173,78 +3194,6 @@ select:focus-visible,
   color: var(--text-secondary);
 }
 
-/* ==========================================================================
-   Media Queries & Responsiveness
-   ========================================================================== */
-@media (max-width: 1024px) {
-  .insights-three-grid {
-    grid-template-columns: 1fr;
-  }
-  .stats-strip-container {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
-  }
-  .stat-box:nth-child(2) {
-    border-right: none;
-  }
-  .chapter-summary-bar {
-    grid-template-columns: 60px 1fr;
-  }
-  .chapter-actions-col {
-    grid-column: 1 / -1;
-    flex-direction: row;
-  }
-  .connection-detail-drawer {
-    width: 320px;
-  }
-}
-
-@media (max-width: 768px) {
-  .navbar-links {
-    display: none;
-  }
-  .mobile-menu-toggle {
-    display: block;
-  }
-  .chapters-preview-grid {
-    grid-template-columns: 1fr;
-  }
-  .stats-strip-container {
-    grid-template-columns: 1fr;
-  }
-  .stat-box {
-    border-right: none;
-    border-bottom: 1px solid var(--border-hairline);
-    padding-bottom: 1rem;
-  }
-  .stat-box:last-child {
-    border-bottom: none;
-    padding-bottom: 0;
-  }
-  .chain-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.75rem;
-  }
-  .chain-footer-explanation {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .connection-detail-drawer {
-    position: fixed;
-    top: auto;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-    height: 70vh;
-    border-left: none;
-    border-top: 1px solid var(--border-subtle);
-  }
-  .story-step-card {
-    padding: 1.75rem 1.25rem;
-  }
-}
 
 /* ==========================================================================
    Receipt Card Interactive Additions
@@ -3874,112 +3823,7 @@ select:focus-visible,
   margin-top: 0.4rem;
 }
 
-@media (max-width: 640px) {
-  .app-main-viewport {
-    padding: 1.25rem 1rem 4rem 1rem;
-  }
-  .hero-main-title {
-    font-size: 2.6rem;
-  }
-  .hero-tagline {
-    font-size: 1.25rem;
-  }
-  .hero-actions-row {
-    flex-direction: column;
-    width: 100%;
-  }
-  .hero-btn {
-    width: 100%;
-    justify-content: center;
-  }
-  .receipts-responsive-grid,
-  .recent-receipts-grid,
-  .modal-meta-grid {
-    grid-template-columns: 1fr;
-  }
-  .modal-overlay-backdrop {
-    padding: 0.75rem;
-  }
-  .modal-footer-actions {
-    flex-direction: column;
-  }
-  .chapter-summary-bar {
-    grid-template-columns: 1fr;
-    padding: 1.25rem;
-    gap: 1rem;
-  }
-  .chapter-index-col {
-    flex-direction: row;
-    align-items: baseline;
-    justify-content: space-between;
-  }
-  .chapter-index-line {
-    display: none;
-  }
-  .story-step-card {
-    padding: 1.25rem 1rem;
-    gap: 1.25rem;
-  }
-  .step-poetic-prompt {
-    font-size: 1.4rem;
-  }
-  .story-conclusion-card {
-    padding: 1.75rem 1rem;
-  }
-  .conclusion-actions {
-    flex-direction: column;
-    width: 100%;
-  }
-  .story-cta-btn {
-    width: 100%;
-    justify-content: center;
-  }
-  .story-controls-bar {
-    gap: 0.5rem;
-  }
-  .graph-toolbar {
-    padding: 0.75rem 1rem;
-  }
-  .graph-view-toggles {
-    width: 100%;
-    justify-content: space-between;
-  }
-  .recent-moments-heading-row {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .view-all-explore-btn {
-    width: 100%;
-    justify-content: center;
-  }
-  .story-header-nav {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 1rem;
-  }
-  .story-switcher-buttons {
-    overflow-x: auto;
-    width: 100%;
-    padding-bottom: 0.25rem;
-    scrollbar-width: none;
-  }
-  .progress-steps-list {
-    overflow-x: auto;
-    width: 100%;
-    padding-bottom: 0.25rem;
-    scrollbar-width: none;
-  }
-  .track-items-grid {
-    grid-template-columns: 1fr;
-  }
-  .detail-panel-actions-row {
-    flex-direction: column;
-  }
-  .detail-action-btn {
-    width: 100%;
-    justify-content: center;
-  }
-}
+
 
 /* Supplementary Functional UI Styles */
 .search-field-container {
@@ -4167,6 +4011,708 @@ select:focus-visible,
 
 .supporting-receipts-count strong {
   color: var(--text-pure);
+}
+
+/* ==========================================================================
+   Comprehensive Responsive UX Engine (1024px, 768px, 540px, 400px, 340px)
+   ========================================================================== */
+
+/* 1. Tablet Landscape & Small Desktop (<= 1024px) */
+@media (max-width: 1024px) {
+  .app-main-viewport {
+    padding: 2rem 1.25rem 4.5rem 1.25rem;
+  }
+  .insights-three-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+  .stats-strip-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+  .stat-box:nth-child(2) {
+    border-right: none;
+  }
+  .receipts-responsive-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+  }
+  .chapter-summary-bar {
+    grid-template-columns: 70px 1fr;
+    gap: 1.5rem;
+    padding: 1.75rem;
+  }
+  .chapter-actions-col {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .connection-detail-drawer,
+  .connection-prompt-sidebar {
+    width: 320px;
+  }
+}
+
+/* 2. Tablet Portrait & Large Handhelds (<= 768px) */
+@media (max-width: 768px) {
+  /* Navigation */
+  .navbar-links {
+    display: none;
+  }
+  .mobile-menu-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .hackathon-tag .tag-text {
+    display: none;
+  }
+
+  /* Main Viewport */
+  .app-main-viewport {
+    padding: 1.5rem 1rem 4rem 1rem;
+  }
+
+  /* Overview */
+  .insights-three-grid,
+  .chapters-preview-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  .stats-strip-container {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 1.25rem;
+  }
+  .stat-box {
+    border-right: none;
+    border-bottom: 1px solid var(--border-hairline);
+    padding-bottom: 0.85rem;
+    padding-right: 0;
+  }
+  .stat-box:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  .chain-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  .chain-footer-explanation {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+  .chain-inspect-btn,
+  .view-all-explore-btn {
+    width: 100%;
+    justify-content: center;
+    min-height: 44px;
+  }
+  .recent-moments-heading-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  /* Explore */
+  .receipts-responsive-grid,
+  .recent-receipts-grid {
+    grid-template-columns: 1fr;
+  }
+  .toolbar-secondary-controls {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.65rem;
+  }
+  .control-group {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .styled-select {
+    flex: 1;
+    min-width: 0;
+    text-align: right;
+  }
+  .clear-filters-btn {
+    width: 100%;
+    justify-content: center;
+    min-height: 44px;
+  }
+
+  /* Connections Network & Drawer */
+  .graph-svg-wrapper {
+    height: 360px;
+  }
+  .connection-prompt-sidebar {
+    position: static;
+    width: 100%;
+    margin-top: 1rem;
+    border-left: none;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem 1.25rem;
+    box-shadow: var(--shadow-sm);
+  }
+  .connection-detail-drawer {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-height: 78vh;
+    z-index: 150;
+    border-left: none;
+    border-top: 1px solid var(--border-glow-cyan);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.85);
+  }
+
+  /* Chapters */
+  .chapter-summary-bar {
+    grid-template-columns: 1fr;
+    padding: 1.5rem 1.25rem;
+    gap: 1rem;
+  }
+  .chapter-index-col {
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+  .chapter-index-line {
+    display: none;
+  }
+  .detail-panel-actions-row {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.5rem;
+  }
+  .detail-action-btn {
+    width: 100%;
+    justify-content: center;
+    min-height: 44px;
+  }
+  .chapter-receipts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Story Mode */
+  .story-header-nav {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+  .story-switcher-buttons {
+    overflow-x: auto;
+    width: 100%;
+    padding-bottom: 0.35rem;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .story-tab-btn {
+    flex-shrink: 0;
+    min-height: 40px;
+  }
+  .progress-steps-list {
+    overflow-x: auto;
+    width: 100%;
+    padding-bottom: 0.35rem;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .step-dot-btn {
+    flex-shrink: 0;
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .story-step-card {
+    padding: 1.75rem 1.25rem;
+    gap: 1.25rem;
+  }
+  .step-poetic-prompt {
+    font-size: clamp(1.35rem, 4.5vw, 1.9rem);
+  }
+  .story-conclusion-card {
+    padding: 2rem 1.25rem;
+  }
+  .conclusion-headline {
+    font-size: clamp(1.45rem, 5vw, 2.2rem);
+  }
+  .conclusion-actions {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.5rem;
+  }
+  .story-cta-btn {
+    width: 100%;
+    justify-content: center;
+    min-height: 44px;
+  }
+  .track-items-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Modal Dialog */
+  .modal-overlay-backdrop {
+    padding: 0.75rem;
+  }
+  .modal-meta-grid {
+    grid-template-columns: 1fr;
+  }
+  .modal-footer-actions {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.5rem;
+  }
+  .modal-action-btn {
+    width: 100%;
+    justify-content: center;
+    min-height: 44px;
+  }
+}
+
+/* Universal Responsive Text Wrapping & Boundary Protection */
+.hero-main-title,
+.hero-tagline,
+.section-heading,
+.receipt-title,
+.chapter-title,
+.story-main-title,
+.modal-receipt-title,
+.drawer-receipt-title,
+.insight-title,
+.step-poetic-prompt,
+.conclusion-headline {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.receipt-notes,
+.chapter-narrative-lead,
+.insight-lead,
+.insight-desc,
+.detail-summary-text,
+.why-text {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* 3. Mobile Devices & Handhelds (<= 540px - covers 430px, 390px, 375px) */
+@media (max-width: 540px) {
+  .app-main-viewport {
+    padding: 1.25rem 0.85rem 3.5rem 0.85rem;
+  }
+  .hero-main-title {
+    font-size: clamp(2.1rem, 9.5vw, 3rem);
+    letter-spacing: -0.02em;
+  }
+  .hero-tagline {
+    font-size: clamp(1.15rem, 5vw, 1.45rem);
+  }
+  .hero-supporting-text {
+    font-size: 0.95rem;
+  }
+  .hero-actions-row {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.75rem;
+  }
+  .hero-btn {
+    width: 100%;
+    justify-content: center;
+    min-height: 48px;
+    touch-action: manipulation;
+  }
+  .hackathon-tag {
+    display: none;
+  }
+
+  /* Chapter Card Actions */
+  .chapter-summary-bar {
+    padding: 1.25rem 1rem;
+  }
+  .chapter-title {
+    font-size: 1.35rem;
+  }
+  .chapter-actions-col {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.5rem;
+  }
+  .read-chapter-cta-btn,
+  .toggle-moments-btn {
+    width: 100%;
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+
+  /* Receipt Cards */
+  .receipt-card {
+    padding: 1.15rem 1rem;
+  }
+  .receipt-title {
+    font-size: 1rem;
+  }
+  .receipt-footer {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .receipt-footer-actions {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+  .view-connections-btn,
+  .quick-detail-btn {
+    flex: 1;
+    justify-content: center;
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+
+  /* Search & Filters */
+  .search-input {
+    font-size: 0.88rem;
+    padding: 0.85rem 2.5rem 0.85rem 1rem;
+    min-height: 44px;
+  }
+  .category-chips-scroll {
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .category-chips-scroll::-webkit-scrollbar {
+    display: none;
+  }
+  .category-chip-btn {
+    min-height: 44px;
+    padding: 0.45rem 0.95rem;
+    touch-action: manipulation;
+    flex-shrink: 0;
+  }
+
+  /* Connection Graph */
+  .graph-svg-wrapper {
+    height: 280px;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+  .relationship-svg {
+    max-width: 100%;
+  }
+  .graph-toolbar {
+    padding: 0.75rem 0.85rem;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+  .cluster-selector-group {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    width: 100%;
+  }
+  .cluster-buttons {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    width: 100%;
+    padding-bottom: 0.25rem;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .cluster-buttons::-webkit-scrollbar {
+    display: none;
+  }
+  .cluster-pill-btn {
+    flex-shrink: 0;
+    min-height: 42px;
+    padding: 0.4rem 0.85rem;
+    touch-action: manipulation;
+  }
+  .graph-view-toggles {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .mode-btn {
+    min-height: 42px;
+  }
+  .reset-selection-btn {
+    min-height: 42px;
+  }
+
+  .chain-stepper-banner {
+    padding: 0.65rem 0.85rem;
+    gap: 0.5rem;
+  }
+  .chain-step-flow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.2rem;
+  }
+
+  /* Connection Drawer */
+  .connection-detail-drawer {
+    width: 100%;
+    max-width: 100vw;
+    left: 0;
+    right: 0;
+    max-height: 82vh;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+  .drawer-inner {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  .drawer-content {
+    padding: 1rem;
+    gap: 1rem;
+  }
+  .drawer-footer {
+    flex-direction: column;
+    padding: 0.85rem 1rem;
+    gap: 0.5rem;
+    width: 100%;
+  }
+  .drawer-action-btn {
+    width: 100%;
+    min-height: 44px;
+    justify-content: center;
+    touch-action: manipulation;
+  }
+
+  /* Story Mode Controls */
+  .story-step-card {
+    padding: 1.25rem 0.85rem;
+    gap: 1rem;
+  }
+  .step-poetic-prompt {
+    font-size: 1.25rem;
+  }
+  .story-controls-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    width: 100%;
+  }
+  .story-center-actions {
+    order: -1;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 0.25rem;
+  }
+  .story-explore-thread-pill {
+    min-height: 40px;
+    padding: 0.4rem 0.85rem;
+    touch-action: manipulation;
+  }
+  .story-nav-arrow-btn {
+    flex: 1;
+    justify-content: center;
+    padding: 0.65rem 0.75rem;
+    min-height: 46px;
+    touch-action: manipulation;
+  }
+
+  /* Modal */
+  .modal-overlay-backdrop {
+    padding: 0.5rem;
+  }
+  .receipt-detail-modal-card {
+    max-height: 90vh;
+    width: 100%;
+  }
+  .modal-header {
+    padding: 0.9rem 1rem;
+  }
+  .modal-body-scrollable {
+    padding: 1.15rem 0.9rem;
+    gap: 1rem;
+  }
+  .modal-receipt-title {
+    font-size: 1.25rem;
+  }
+  .modal-footer-actions {
+    padding: 0.85rem 1rem;
+    flex-direction: column;
+    width: 100%;
+    gap: 0.5rem;
+  }
+  .modal-action-btn {
+    width: 100%;
+    justify-content: center;
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+}
+
+/* 4. Compact Mobile Viewports (<= 400px - covers 390px, 375px) */
+@media (max-width: 400px) {
+  .app-main-viewport {
+    padding: 1rem 0.65rem 3rem 0.65rem;
+  }
+  .navbar-container {
+    padding: 0.65rem 0.85rem;
+  }
+  .brand-title {
+    font-size: 1.05rem;
+  }
+  .hero-main-title {
+    font-size: clamp(1.85rem, 8.5vw, 2.3rem);
+    line-height: 1.15;
+  }
+  .hero-pill-badge {
+    font-size: 0.72rem;
+    padding: 0.25rem 0.65rem;
+  }
+  .stat-box {
+    padding: 0.85rem 0.65rem;
+  }
+  .stat-number {
+    font-size: 1.85rem;
+  }
+  .chain-showcase-panel {
+    padding: 1rem 0.75rem;
+  }
+  .chain-steps-track {
+    gap: 0.5rem;
+  }
+  .chain-node-card {
+    min-width: 150px;
+    padding: 0.75rem;
+  }
+  .graph-svg-wrapper {
+    height: 250px;
+  }
+  .story-step-card {
+    padding: 1.1rem 0.75rem;
+  }
+  .step-poetic-prompt {
+    font-size: 1.15rem;
+  }
+  .story-controls-bar {
+    gap: 0.5rem;
+  }
+  .story-center-actions {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .story-nav-arrow-btn {
+    min-height: 44px;
+    font-size: 0.82rem;
+  }
+  .modal-overlay-backdrop {
+    padding: 0.35rem;
+  }
+  .receipt-detail-modal-card {
+    max-height: 94vh;
+  }
+}
+
+/* 5. Micro Mobile & Ultra-Compact Viewports (<= 360px - covers 320px) */
+@media (max-width: 360px) {
+  .app-main-viewport {
+    padding: 0.75rem 0.45rem 2.5rem 0.45rem;
+  }
+  .navbar-container {
+    padding: 0.5rem 0.65rem;
+  }
+  .brand-subtext {
+    display: none;
+  }
+  .brand-title {
+    font-size: 0.95rem;
+  }
+  .brand-gem {
+    width: 28px;
+    height: 28px;
+  }
+  .hero-main-title {
+    font-size: 1.7rem;
+    letter-spacing: -0.01em;
+  }
+  .hero-tagline {
+    font-size: 0.95rem;
+  }
+  .hero-supporting-text {
+    font-size: 0.85rem;
+  }
+  .section-heading {
+    font-size: 1.25rem;
+  }
+  .stat-number {
+    font-size: 1.65rem;
+  }
+  .editorial-insight-card,
+  .chapter-preview-card,
+  .receipt-card {
+    padding: 0.9rem 0.65rem;
+  }
+  .receipt-footer-actions {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.4rem;
+  }
+  .view-connections-btn,
+  .quick-detail-btn {
+    width: 100%;
+    min-height: 44px;
+  }
+  .chain-node-card {
+    min-width: 135px;
+    padding: 0.65rem;
+  }
+  .graph-svg-wrapper {
+    height: 220px;
+  }
+  .step-poetic-prompt {
+    font-size: 1.05rem;
+  }
+  .conclusion-headline {
+    font-size: 1.15rem;
+  }
+  .story-step-card {
+    padding: 0.85rem 0.55rem;
+  }
+  .modal-receipt-title {
+    font-size: 1.1rem;
+  }
+  .meta-pill {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.4rem;
+  }
+  .modal-body-scrollable {
+    padding: 0.85rem 0.6rem;
+  }
+  .modal-header {
+    padding: 0.65rem 0.75rem;
+  }
+  .modal-footer-actions {
+    padding: 0.65rem 0.6rem;
+  }
+  .category-chip-btn {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.65rem;
+    min-height: 40px;
+  }
+  .cluster-pill-btn {
+    font-size: 0.72rem;
+    padding: 0.3rem 0.6rem;
+    min-height: 38px;
+  }
 }
 
 

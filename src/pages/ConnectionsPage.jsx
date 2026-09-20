@@ -1,14 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { 
-  GitMerge, 
-  Sparkles, 
-  Layers, 
-  HelpCircle,
-  TrendingUp,
-  Share2,
-  Info
-} from 'lucide-react';
+import { GitMerge } from 'lucide-react';
 import ConnectionGraph from '../components/ConnectionGraph';
 import ConnectionDrawer from '../components/ConnectionDrawer';
 

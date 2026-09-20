@@ -5,18 +5,10 @@ import {
   ArrowRight, 
   Search, 
   GitMerge, 
-  Layers, 
   BookOpen, 
-  Cpu, 
-  Compass,
-  Zap,
-  TrendingUp,
-  Clock,
-  MapPin,
-  CheckCircle2,
-  ChevronRight,
-  Receipt,
-  Filter
+  MapPin, 
+  ChevronRight, 
+  Receipt 
 } from 'lucide-react';
 import InsightCard from '../components/InsightCard';
 import ReceiptCard from '../components/ReceiptCard';
@@ -212,7 +204,7 @@ export default function OverviewPage({
                     aria-label={`Inspect ${r.id}: ${r.title}`}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' || e.key === ' ') {
-                        onSelectReceipt && onSelectReceipt(r);
+                        if (onSelectReceipt) onSelectReceipt(r);
                       }
                     }}
                   >

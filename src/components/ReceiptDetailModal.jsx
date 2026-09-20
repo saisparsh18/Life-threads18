@@ -5,13 +5,10 @@ import {
   Clock, 
   MapPin, 
   GitMerge, 
-  Tag, 
   Layers, 
-  Sparkles, 
   ShieldCheck,
   ChevronRight,
-  Zap,
-  ArrowRight
+  Zap
 } from 'lucide-react';
 import { CATEGORY_CONFIG } from '../data/mockReceipts';
 
@@ -187,7 +184,7 @@ export default function ReceiptDetailModal({
                         title={`Inspect connected receipt: ${linked.title}`}
                         onKeyDown={(e) => {
                           if (e.key === 'Enter' || e.key === ' ') {
-                            onSelectReceipt && onSelectReceipt(linked);
+                            if (onSelectReceipt) onSelectReceipt(linked);
                           }
                         }}
                       >

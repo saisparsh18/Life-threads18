@@ -7,11 +7,10 @@ import {
   BookOpen, 
   Sparkles, 
   Menu, 
-  X,
-  Layers
+  X
 } from 'lucide-react';
 
-export const NAV_ITEMS = [
+const NAV_ITEMS = [
   { id: 'overview', label: 'Overview', icon: Compass },
   { id: 'explore', label: 'Explore', icon: Search },
   { id: 'connections', label: 'Connections', icon: GitMerge },
@@ -129,8 +128,10 @@ export default function Navbar({ activeTab, onSelectTab }) {
                     onClick={() => handleNavClick(item.id)}
                     aria-label={`Navigate to ${item.label}`}
                   >
-                    <Icon size={18} className="mobile-nav-icon" />
-                    <span>{item.label}</span>
+                    <div className="mobile-nav-btn-left">
+                      <Icon size={18} className="mobile-nav-icon" />
+                      <span>{item.label}</span>
+                    </div>
                     {isActive && <span className="mobile-active-dot"></span>}
                   </button>
                 );

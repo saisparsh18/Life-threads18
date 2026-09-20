@@ -1,29 +1,22 @@
 import React, { useState, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Search, 
   Filter, 
   X, 
   Calendar, 
-  Layers, 
   ArrowUpDown, 
   RotateCcw, 
-  Sparkles, 
   Inbox,
-  Tag,
-  Clock,
-  SlidersHorizontal,
-  MapPin,
-  User,
-  Check
+  SlidersHorizontal
 } from 'lucide-react';
 import ReceiptCard from '../components/ReceiptCard';
 import ReceiptDetailModal from '../components/ReceiptDetailModal';
 import { CATEGORIES, CATEGORY_CONFIG } from '../data/mockReceipts';
+import { getConnectionCountsMap, filterAndSortReceipts, getConnectionsForReceipt } from '../engine/connections';
 
 export default function ExplorePage({ 
   receipts = [], 
-  connectionsEngine, 
+  connectionCounts: propConnectionCounts,
   onViewConnections, 
   initialSearch = '', 
   initialCategory = 'All' 
@@ -34,92 +27,22 @@ export default function ExplorePage({
   const [sortBy, setSortBy] = useState('DATE_DESC'); // DATE_DESC, DATE_ASC, CONNECTIONS_DESC, TITLE_ASC
   const [inspectingReceipt, setInspectingReceipt] = useState(null);
 
-  // Pre-calculate connections count map for fast lookup
+  // Pre-calculate or reuse connections count map for fast lookup
   const connectionCounts = useMemo(() => {
-    const map = {};
-    receipts.forEach(r => {
-      const connData = connectionsEngine?.getConnectionsForReceipt 
-        ? connectionsEngine.getConnectionsForReceipt(r.id, receipts)
-        : { connectedCount: 0 };
-      map[r.id] = connData.connectedCount || 0;
-    });
-    return map;
-  }, [receipts, connectionsEngine]);
+    if (propConnectionCounts && Object.keys(propConnectionCounts).length > 0) {
+      return propConnectionCounts;
+    }
+    return getConnectionCountsMap(receipts);
+  }, [receipts, propConnectionCounts]);
 
-  // Comprehensive multi-field search across:
-  // 1. title
-  // 2. description (notes / description)
-  // 3. location
-  // 4. artist/person (metadata fields: artist, person, sender, recipient, author, speaker, host, with)
-  // 5. keywords (tags & text keywords)
-  // 6. category
+  // Decoupled multi-field search and sorting engine
   const filteredReceipts = useMemo(() => {
-    return receipts.filter(r => {
-      // 1. Category Filter
-      if (selectedCategory !== 'All' && r.category !== selectedCategory) {
-        return false;
-      }
-
-      // 2. Date Filter
-      if (dateFilter === 'MARCH_2026') {
-        if (!r.date || !r.date.startsWith('2026-03')) return false;
-      } else if (dateFilter === 'APRIL_2026') {
-        if (!r.date || !r.date.startsWith('2026-04')) return false;
-      } else if (dateFilter === 'EARLY_MARCH') {
-        if (!r.date || r.date < '2026-03-01' || r.date > '2026-03-15') return false;
-      } else if (dateFilter === 'LATE_MARCH') {
-        if (!r.date || r.date < '2026-03-16' || r.date > '2026-03-31') return false;
-      } else if (dateFilter === 'EARLY_APRIL') {
-        if (!r.date || r.date < '2026-04-01' || r.date > '2026-04-15') return false;
-      } else if (dateFilter === 'LATE_APRIL') {
-        if (!r.date || r.date < '2026-04-16' || r.date > '2026-04-30') return false;
-      }
-
-      // 3. Multi-field Search
-      if (searchQuery.trim()) {
-        const query = searchQuery.toLowerCase().trim();
-        
-        // Match title
-        const titleMatch = (r.title || '').toLowerCase().includes(query);
-
-        // Match description (notes or description)
-        const descMatch = (r.notes || '').toLowerCase().includes(query) || 
-                          (r.description || '').toLowerCase().includes(query);
-
-        // Match location
-        const locMatch = (r.location || '').toLowerCase().includes(query);
-
-        // Match category
-        const catMatch = (r.category || '').toLowerCase().includes(query);
-
-        // Match keywords / tags
-        const tagsMatch = (r.tags || []).some(t => t.toLowerCase().includes(query));
-
-        // Match artist / person fields and general metadata
-        const metadataValues = Object.entries(r.metadata || {});
-        const metaMatch = metadataValues.some(([key, val]) => 
-          key.toLowerCase().includes(query) || String(val).toLowerCase().includes(query)
-        );
-        const personMatch = ['artist', 'person', 'sender', 'recipient', 'speaker', 'author', 'with', 'host', 'director', 'curator'].some(field => 
-          r.metadata && r.metadata[field] && String(r.metadata[field]).toLowerCase().includes(query)
-        );
-
-        if (!titleMatch && !descMatch && !locMatch && !catMatch && !tagsMatch && !metaMatch && !personMatch) {
-          return false;
-        }
-      }
-
-      return true;
-    }).sort((a, b) => {
-      if (sortBy === 'DATE_DESC') return b.date.localeCompare(a.date) || (b.time || '').localeCompare(a.time || '');
-      if (sortBy === 'DATE_ASC') return a.date.localeCompare(b.date) || (a.time || '').localeCompare(b.time || '');
-      if (sortBy === 'CONNECTIONS_DESC') {
-        return (connectionCounts[b.id] || 0) - (connectionCounts[a.id] || 0);
-      }
-      if (sortBy === 'TITLE_ASC') {
-        return a.title.localeCompare(b.title);
-      }
-      return 0;
+    return filterAndSortReceipts(receipts, {
+      category: selectedCategory,
+      dateFilter,
+      query: searchQuery,
+      sortBy,
+      connectionCounts
     });
   }, [receipts, selectedCategory, dateFilter, searchQuery, sortBy, connectionCounts]);
 
@@ -135,9 +58,9 @@ export default function ExplorePage({
 
   // Connection data for currently inspected receipt
   const inspectingConnectionData = useMemo(() => {
-    if (!inspectingReceipt || !connectionsEngine?.getConnectionsForReceipt) return null;
-    return connectionsEngine.getConnectionsForReceipt(inspectingReceipt.id, receipts);
-  }, [inspectingReceipt, connectionsEngine, receipts]);
+    if (!inspectingReceipt) return null;
+    return getConnectionsForReceipt(inspectingReceipt.id, receipts);
+  }, [inspectingReceipt, receipts]);
 
   // Human readable label for current date filter
   const dateFilterLabels = {

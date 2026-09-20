@@ -11,9 +11,10 @@ import { mockReceipts } from './data/mockReceipts';
 import { 
   buildConnectionGraph, 
   getConnectionsForReceipt, 
+  getConnectionCountsMap,
   getFlagshipChain 
 } from './engine/connections';
-import { generateChapters } from './engine/chapters';
+import { generateChapters, findChapterForReceipt } from './engine/chapters';
 import { generateFlagshipInsights, calculateOverviewMetrics } from './engine/insights';
 
 export default function App() {
@@ -47,14 +48,9 @@ export default function App() {
     return calculateOverviewMetrics(receipts, graphData, chapters);
   }, [receipts, graphData, chapters]);
 
-  // Connection counts dictionary for fast lookup
+  // Connection counts dictionary for fast lookup via engine utility
   const connectionCounts = useMemo(() => {
-    const map = {};
-    receipts.forEach(r => {
-      const connData = getConnectionsForReceipt(r.id, receipts);
-      map[r.id] = connData.connectedCount;
-    });
-    return map;
+    return getConnectionCountsMap(receipts);
   }, [receipts]);
 
   // Sorted recent receipts for Overview section 4
@@ -162,7 +158,7 @@ export default function App() {
         {activeTab === 'explore' && (
           <ExplorePage
             receipts={receipts}
-            connectionsEngine={{ getConnectionsForReceipt }}
+            connectionCounts={connectionCounts}
             onViewConnections={handleViewConnections}
             initialSearch={exploreInitialSearch}
             initialCategory={exploreInitialCategory}
@@ -178,7 +174,7 @@ export default function App() {
             onSelectReceipt={(r) => setSelectedReceiptId(r.id)}
             onResetSelection={handleResetSelection}
             onNavigateToStory={(r) => {
-              const foundCh = chapters.find(c => c.receipts.some(item => item.id === r?.id));
+              const foundCh = findChapterForReceipt(chapters, r?.id);
               if (foundCh) {
                 setSelectedStoryChapterId(foundCh.id);
               }
